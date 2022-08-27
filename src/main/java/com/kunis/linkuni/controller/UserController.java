@@ -5,15 +5,21 @@ import com.kunis.linkuni.dto.user.UserDTO;
 import com.kunis.linkuni.entity.User;
 import com.kunis.linkuni.security.TokenProvider;
 import com.kunis.linkuni.service.UserService;
+
+import io.netty.util.Constant;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -28,7 +34,7 @@ public class UserController {
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-
+    @ApiOperation(value = "회원가입", notes = "회원가입")
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
         try {
@@ -54,6 +60,7 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "로그인", notes = "로그인, 토큰 반환")
     @PostMapping("/signin")
     public ResponseEntity<UserDTO> authenticate(@RequestBody UserDTO userDTO) {
         User user = userService.getByCredentials(
@@ -80,4 +87,20 @@ public class UserController {
 //                    .body(responseDTO);
 //        }
     }
+
+//    @GetMapping("/logout")
+//    public ResponseEntity<String> logout(HttpServletRequest req) {
+//        String token = tokenProvider.extractToken(req);
+//        if (tokenProvider.validateToken(token)) {
+//            Date expirationDate = tokenProvider.getExpirationDate(token);
+//            redisTemplate.opsForValue().set(
+//                    Constant.RDIS_PREFIX + token, "l",
+//                    expirationDate.getTime() - System.currentTimeMillis(),
+//                    TimeUnit.MILLISECONDS
+//            );
+//            log.info("redis value : "+redisTemplate.opsForValue().get(Constant.RDIS_PREFIX + token));
+//        }
+//        return new ResponseEntity<String>("", HttpStatus.NO_CONTENT);
+//    }
+
 }

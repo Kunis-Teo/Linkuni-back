@@ -6,6 +6,7 @@ import com.kunis.linkuni.dto.tag.TagDTO;
 import com.kunis.linkuni.dto.tag.TagListDTO;
 import com.kunis.linkuni.entity.Tag;
 import com.kunis.linkuni.service.TagService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class TagController {
 
     private final TagService tagService;
 
+    @ApiOperation(value = "등록된 모든 테그 조회", notes = "로그인 중인 사용자가 등록한 모든 테그 조회")
     @GetMapping("/list")
     public ResponseEntity<TagListDTO> registerTag(@AuthenticationPrincipal String userId) {
         TagListDTO tagListDTO = tagService.getTagList(userId);
@@ -29,6 +31,7 @@ public class TagController {
         return ResponseEntity.ok(tagListDTO);
     }
 
+    @ApiOperation(value = "테그 추가", notes = "테그 추가")
     @PostMapping("/add")
     public ResponseEntity<?> registerTag(@AuthenticationPrincipal String userId, @RequestBody TagDTO tagDTO) {
         try {

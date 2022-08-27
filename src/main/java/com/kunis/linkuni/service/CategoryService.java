@@ -45,4 +45,12 @@ public class CategoryService {
         categoryListDTO.setCategoryList(categoryDTOs);
         return categoryListDTO;
     }
+
+    public Category setPine(String categoryId){
+        Category category = categoryRepository.findById(categoryId).get();
+        if(category.getIsPinned()) category.setIsPinned(false);
+        else category.setIsPinned(true);
+
+        return category;
+    }
 }

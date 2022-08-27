@@ -2,10 +2,15 @@ package com.kunis.linkuni.security;
 
 import com.kunis.linkuni.entity.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -14,6 +19,9 @@ import java.util.Date;
 @Slf4j
 @Service
 public class TokenProvider {
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     private static final String SECRET_KEY = "Q4NSl604sgyHJj1cUeR4uUqwEkR3ycUeR4uUqwEkR3ycUeR4uUAt7WJrxMEbSF4XXyaD7EN3O9DVM4yyYuHxMEbSF4XXyYJkal13eqgB0F7Bq4H";
 
     public String create(User user) {
@@ -59,4 +67,20 @@ public class TokenProvider {
 
         return claims.getSubject();
     }
+
+//    public boolean validateToken(String jwtToken) {
+//        try {
+//            Jws<Claims> claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(jwtToken);
+//            boolean isNotExpire = claims.getBody().getExpiration().after(new Date());
+//            if (null != redisTemplate.opsForValue().get(Constant.REDIS_PREFIX + jwtToken)) {
+//                log.info("이미 로그아웃 처리된 사용자");
+//                return false;
+//            }
+//            return isNotExpire;
+//        } catch (Exception e) {
+//            log.info("token is not valid");
+//            return false;
+//        }
+//    }
+
 }
