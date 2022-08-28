@@ -7,7 +7,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 @EnableWebSecurity
 @Slf4j
@@ -41,5 +44,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 jwtAuthenticationFilter,
                 CorsFilter.class
         );
+
+        http.cors().configurationSource(request -> {
+            var cors = new CorsConfiguration();
+            cors.setAllowedOrigins(List.of("http://localhost:3001", "http://localhost:3000"));
+            cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedHeaders(List.of("*"));
+            return cors;
+        });
+
     }
 }

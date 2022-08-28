@@ -21,7 +21,7 @@ public class UrlTag {
     @GenericGenerator(name="system-uuid", strategy = "uuid")
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "url_id")
     private Url url;
 

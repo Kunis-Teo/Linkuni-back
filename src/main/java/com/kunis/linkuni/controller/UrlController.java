@@ -40,14 +40,24 @@ public class UrlController {
         return ResponseEntity.ok("success");
     }
 
-
     @ApiOperation(value = "url 삭제", notes = "url path id인 url삭제")
     @DeleteMapping("/delete/{urlId}")
     public ResponseEntity<String> deleteUrl(@AuthenticationPrincipal String userId,
                                                            @PathVariable String urlId){
-        urlService.deleteUrl(userId);
+        urlService.deleteUrl(urlId);
 
         return ResponseEntity.ok("success delete");
+    }
+
+    @ApiOperation(value = "url 조회", notes = "조회칼럼 true, watched_at 칼럼 update")
+    @GetMapping("/{urlId}")
+    public ResponseEntity<UrlDTO> selectUrl(@AuthenticationPrincipal String userId,
+                                          @PathVariable String urlId){
+        Url url = urlService.watchUrl(urlId);
+        UrlDTO urlDTO = new UrlDTO(url.getId(), url.getUrl(), url.getMemo(), url.getIsStarred(), url.getIsWatched(),
+                url.getCreateAt(), url.getWatchedAt(), url.getCategory().getId());
+
+        return ResponseEntity.ok(urlDTO);
     }
 
     @ApiOperation(value = "url 북마크", notes = "url이 북마크 상태라면 해제, 아니라면 북마크 설정")
