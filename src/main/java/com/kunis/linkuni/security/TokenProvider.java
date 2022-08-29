@@ -19,8 +19,8 @@ import java.util.Date;
 @Slf4j
 @Service
 public class TokenProvider {
-    @Autowired
-    private RedisTemplate redisTemplate;
+//    @Autowired
+//    private RedisTemplate redisTemplate;
 
     private static final String SECRET_KEY = "Q4NSl604sgyHJj1cUeR4uUqwEkR3ycUeR4uUqwEkR3ycUeR4uUAt7WJrxMEbSF4XXyaD7EN3O9DVM4yyYuHxMEbSF4XXyYJkal13eqgB0F7Bq4H";
 

@@ -45,9 +45,15 @@ public class UrlController {
     @DeleteMapping("/delete/{urlId}")
     public ResponseEntity<String> deleteUrl(@AuthenticationPrincipal String userId,
                                                            @PathVariable String urlId){
-        urlService.deleteUrl(urlId);
+        try{
+            urlService.deleteUrl(urlId);
+            return ResponseEntity.ok("success delete url");
 
-        return ResponseEntity.ok("success delete");
+        } catch (Exception e) {
+
+            return ResponseEntity.ok("fail delete url");
+        }
+
     }
 
     @ApiOperation(value = "url 조회", notes = "조회칼럼 true, watched_at 칼럼 update")
@@ -55,10 +61,19 @@ public class UrlController {
     public ResponseEntity<UrlDTO> selectUrl(@AuthenticationPrincipal String userId,
                                           @PathVariable String urlId){
         Url url = urlService.watchUrl(urlId);
-        UrlDTO urlDTO = new UrlDTO(url.getId(), url.getUrl(), url.getMemo(), url.getIsStarred(), url.getIsWatched(),
-                url.getCreateAt(), url.getWatchedAt(), url.getCategory().getId());
 
-        return ResponseEntity.ok(urlDTO);
+        UrlDTO responseUrlDTO = UrlDTO.builder()
+                .id(url.getId())
+                .url(url.getUrl())
+                .memo(url.getMemo())
+                .isStarred(url.getIsStarred())
+                .isWatched(url.getIsWatched())
+                .createAt(url.getCreateAt())
+                .watchedAt(url.getWatchedAt())
+                .category_id(url.getCategory().getId())
+                .build();
+
+        return ResponseEntity.ok(responseUrlDTO);
     }
 
     @ApiOperation(value = "url 북마크", notes = "url이 북마크 상태라면 해제, 아니라면 북마크 설정")
@@ -66,10 +81,19 @@ public class UrlController {
     public ResponseEntity<UrlDTO> setStar(@AuthenticationPrincipal String userId,
                                             @PathVariable String urlId){
         Url url = urlService.setStart(urlId);
-        UrlDTO urlDTO = new UrlDTO(url.getId(), url.getUrl(), url.getMemo(), url.getIsStarred(), url.getIsWatched(),
-                url.getCreateAt(), url.getWatchedAt(), url.getCategory().getId());
 
-        return ResponseEntity.ok(urlDTO);
+        UrlDTO responseUrlDTO = UrlDTO.builder()
+                .id(url.getId())
+                .url(url.getUrl())
+                .memo(url.getMemo())
+                .isStarred(url.getIsStarred())
+                .isWatched(url.getIsWatched())
+                .createAt(url.getCreateAt())
+                .watchedAt(url.getWatchedAt())
+                .category_id(url.getCategory().getId())
+                .build();
+
+        return ResponseEntity.ok(responseUrlDTO);
     }
 
     @ApiOperation(value = "선택 카테고리 url 조회", notes = "url path id 카테고리에 속한 url 조회")

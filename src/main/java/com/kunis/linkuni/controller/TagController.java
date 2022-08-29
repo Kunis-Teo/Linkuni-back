@@ -41,8 +41,12 @@ public class TagController {
                     .build();
 
             Tag registredTag = tagService.registerTag(tag, userId);
+            TagDTO responseTagDTO = TagDTO.builder()
+                    .id(registredTag.getId())
+                    .name(registredTag.getName())
+                    .build();
 
-            return ResponseEntity.ok(tagDTO);
+            return ResponseEntity.ok(responseTagDTO);
         } catch (Exception e) {
             // 예외가 나는 경우 bad 리스폰스 리턴.
             ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();

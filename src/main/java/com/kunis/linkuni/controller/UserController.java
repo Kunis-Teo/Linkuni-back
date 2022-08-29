@@ -62,14 +62,14 @@ public class UserController {
 
     @ApiOperation(value = "로그인", notes = "로그인, 토큰 반환")
     @PostMapping("/signin")
-    public ResponseEntity<UserDTO> authenticate(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> authenticate(@RequestBody UserDTO userDTO) {
         User user = userService.getByCredentials(
                 userDTO.getName(),
                 userDTO.getPassword(),
                 passwordEncoder);
 
-//        if(user != null) {
-            // 토큰 생성
+        if(user != null) {
+             //토큰 생성
             final String token = tokenProvider.create(user);
             final UserDTO responseUserDTO = UserDTO.builder()
                     .name(user.getName())
@@ -77,15 +77,15 @@ public class UserController {
                     .token(token)
                     .build();
             return ResponseEntity.ok().body(responseUserDTO);
-//        }
-//        else {
-//            ResponseDTO responseDTO = ResponseDTO.builder()
-//                    .error("Login failed.")
-//                    .build();
-//            return ResponseEntity
-//                    .badRequest()
-//                    .body(responseDTO);
-//        }
+        }
+        else {
+            ResponseDTO responseDTO = ResponseDTO.builder()
+                    .error("Login failed.")
+                    .build();
+            return ResponseEntity
+                    .badRequest()
+                    .body(responseDTO);
+        }
     }
 
 //    @GetMapping("/logout")

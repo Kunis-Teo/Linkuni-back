@@ -13,5 +13,10 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
     @Query(value = "select c from Category c join fetch c.user where c.id = :id")
     Category findByIdFetch(@Param("id") String id);
 
+    @Query(value = "select distinct c from Category c join fetch c.urlList ul where c.user=:user")
+    List<Category> findByUserJoinFetch(User user);
+
     List<Category> findByUser(User user);
+
+    boolean existsByUserAndName(User user, String name);
 }

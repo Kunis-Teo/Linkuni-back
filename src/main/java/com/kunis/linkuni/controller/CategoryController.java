@@ -4,6 +4,7 @@ import com.kunis.linkuni.dto.*;
 import com.kunis.linkuni.dto.category.CategoryAddDTO;
 import com.kunis.linkuni.dto.category.CategoryDTO;
 import com.kunis.linkuni.dto.category.CategoryListDTO;
+import com.kunis.linkuni.dto.user.UserDTO;
 import com.kunis.linkuni.entity.Category;
 import com.kunis.linkuni.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/category")
-@CrossOrigin(origins = "http://localhost:3001")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -26,9 +26,13 @@ public class CategoryController {
     @GetMapping("/pine/{categoryId}")
     public ResponseEntity<CategoryDTO> setPine(@AuthenticationPrincipal String userId, @PathVariable String categoryId) {
         Category category = categoryService.setPine(categoryId);
-        CategoryDTO categoryDTO = new CategoryDTO(category.getId(), category.getName(), category.getIsPinned());
+        CategoryDTO responsecategoryDTO = CategoryDTO.builder()
+                        .id(category.getId())
+                        .name(category.getName())
+                        .isPinned(category.getIsPinned())
+                        .build();
 
-        return ResponseEntity.ok(categoryDTO);
+        return ResponseEntity.ok(responsecategoryDTO);
     }
 
     @ApiOperation(value = "등록된 모든 카테고리 조회", notes = "로그인 중인 사용자가 등록한 모든 카테고리 조회")
@@ -49,8 +53,13 @@ public class CategoryController {
                     .build();
 
             Category registeredCategory = categoryService.registerCategory(category, userId);
+            CategoryDTO responseCategoryDTO = CategoryDTO.builder()
+                    .id(registeredCategory.getId())
+                    .name(registeredCategory.getName())
+                    .isPinned(registeredCategory.getIsPinned())
+                    .build();
 
-            return ResponseEntity.ok(categoryAddDTO);
+            return ResponseEntity.ok(responseCategoryDTO);
         } catch (Exception e) {
             // 예외가 나는 경우 bad 리스폰스 리턴.
             ResponseDTO responseDTO = ResponseDTO.builder().error(e.getMessage()).build();

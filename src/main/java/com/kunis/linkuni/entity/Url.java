@@ -1,5 +1,6 @@
 package com.kunis.linkuni.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -45,6 +46,7 @@ public class Url {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "url", cascade = CascadeType.REMOVE)
     private List<UrlTag> urlTagList = new ArrayList<>();
 }
