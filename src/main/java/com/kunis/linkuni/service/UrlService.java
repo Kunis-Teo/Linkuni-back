@@ -2,8 +2,10 @@ package com.kunis.linkuni.service;
 
 import com.kunis.linkuni.dto.tag.TagAddDto;
 import com.kunis.linkuni.dto.tag.TagDTO;
+import com.kunis.linkuni.dto.url.UrlAllListDto;
 import com.kunis.linkuni.dto.url.UrlDTO;
 import com.kunis.linkuni.dto.url.UrlListDTO;
+import com.kunis.linkuni.entity.Category;
 import com.kunis.linkuni.entity.Tag;
 import com.kunis.linkuni.entity.Url;
 import com.kunis.linkuni.entity.UrlTag;
@@ -76,6 +78,36 @@ public class UrlService {
         }
         urlListDTO.setUrlDTOList(urlDTOList);
         return urlListDTO;
+    }
+
+    public UrlAllListDto getUrlAllList(String userId){
+        List<Category> categoryList = categoryRepository.findByUser(userRepository.findById(userId).get());
+
+        UrlAllListDto urlAllListDto = new UrlAllListDto();
+        List<UrlListDTO> urlListDTOList = new ArrayList<>();
+
+        for(int k=0;k<categoryList.size();k++){
+            List<Url> urlList = urlRepository.findByCategory(categoryList.get(k));
+            UrlListDTO urlListDTO = new UrlListDTO();
+            urlListDTO.setCategory_id(categoryList.get(k).getId());
+            List<UrlDTO> urlDTOList = new ArrayList<>();
+            for(int i=0;i<urlList.size();i++){
+                List<UrlTag> urlTags = urlTagRepository.findByUrl(urlList.get(i).getId());
+                List<TagDTO> tagDTOList = new ArrayList<>();
+                for(int j=0;j<urlTags.size();j++){
+                    tagDTOList.add(new TagDTO(urlTags.get(i).getTag().getId(), urlTags.get(i).getTag().getName()));
+                }
+                urlDTOList.add(new UrlDTO(urlList.get(i).getId(), urlList.get(i).getUrl(),
+                        urlList.get(i).getMemo(), urlList.get(i).getIsStarred(),
+                        urlList.get(i).getIsWatched(), urlList.get(i).getCreateAt(), urlList.get(i).getWatchedAt(),
+                        urlList.get(i).getCategory().getId(), tagDTOList));
+            }
+            urlListDTO.setUrlDTOList(urlDTOList);
+            urlListDTOList.add(urlListDTO);
+        }
+
+        urlAllListDto.setUrlListDTOList(urlListDTOList);
+        return urlAllListDto;
     }
 
     public Url setStart(String urlId){

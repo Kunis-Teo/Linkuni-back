@@ -2,6 +2,7 @@ package com.kunis.linkuni.controller;
 
 import com.kunis.linkuni.dto.ResponseDTO;
 import com.kunis.linkuni.dto.url.UrlAddDto;
+import com.kunis.linkuni.dto.url.UrlAllListDto;
 import com.kunis.linkuni.dto.url.UrlDTO;
 import com.kunis.linkuni.dto.url.UrlListDTO;
 import com.kunis.linkuni.entity.Url;
@@ -78,6 +79,14 @@ public class UrlController {
         UrlListDTO urlListDTO = urlService.getUrlListByCategory(categoryId);
 
         return ResponseEntity.ok(urlListDTO);
+    }
+
+    @ApiOperation(value = "모든 url 조회", notes = "카테고리 별 url, tag 조회")
+    @GetMapping("/list")
+    public ResponseEntity<UrlAllListDto> getAllUrlList(@AuthenticationPrincipal String userId){
+        UrlAllListDto urlAllListDto = urlService.getUrlAllList(userId);
+
+        return ResponseEntity.ok(urlAllListDto);
     }
 
     @ApiOperation(value = "새로운 url 추가", notes = "카테고리 필수, 테그  선택 사항")
