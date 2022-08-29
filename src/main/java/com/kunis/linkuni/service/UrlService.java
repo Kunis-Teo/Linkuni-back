@@ -140,18 +140,18 @@ public class UrlService {
         return urlRepository.findByUser(userRepository.findById(userId).get());
     }
 
-    public List<Url> update(Url entity, String userId, String category_id) {
-        final Optional<Url> original = urlRepository.findById(entity.getId());
+    public Url update(Url entity, String userId, String category_id, List<TagDTO> tagDTOList) {
         entity.setCategory(categoryRepository.findById(category_id).get());
+        entity.setUser(userRepository.findById(userId).get());
+        // tag 부분 추가 필요
 
-        original.ifPresent(url -> {
-            url.setUrl(entity.getUrl());
-            url.setMemo(entity.getMemo());
-            url.setCategory(entity.getCategory());
+        Url original = urlRepository.findByIdJoinFetch(entity.getId());
+        original.setUrl(entity.getUrl());
+        original.setMemo(entity.getMemo());
+        original.setCategory(entity.getCategory());
+        //original.setUrlTagList();
+        urlRepository.save(original);
 
-            urlRepository.save(url);
-        });
-
-        return getAllUrl(userId);
+        return original;
     }
 }

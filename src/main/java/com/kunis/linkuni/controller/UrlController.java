@@ -1,11 +1,10 @@
 package com.kunis.linkuni.controller;
 
 import com.kunis.linkuni.dto.ResponseDTO;
-import com.kunis.linkuni.dto.url.UrlAddDto;
-import com.kunis.linkuni.dto.url.UrlAllListDto;
-import com.kunis.linkuni.dto.url.UrlDTO;
-import com.kunis.linkuni.dto.url.UrlListDTO;
+import com.kunis.linkuni.dto.tag.TagDTO;
+import com.kunis.linkuni.dto.url.*;
 import com.kunis.linkuni.entity.Url;
+import com.kunis.linkuni.entity.UrlTag;
 import com.kunis.linkuni.service.CategoryService;
 import com.kunis.linkuni.service.UrlService;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,19 +26,38 @@ public class UrlController {
     private final CategoryService categoryService;
 
     @PutMapping
-    public ResponseEntity<String> updateUrl(@AuthenticationPrincipal String userId,
-                                        @RequestBody UrlDTO urlDTO) {
+    public ResponseEntity<UrlDTO> updateUrl(@AuthenticationPrincipal String userId,
+                                            @RequestBody UrlUpdateDTO updateDTO) {
 
-        Url entity = new Url();
-        entity.setId(urlDTO.getId());
-        entity.setUrl(urlDTO.getUrl());
-        entity.setMemo(urlDTO.getMemo());
-        //entity.setCategory(urlDTO.getCategory_id());
+        Url entity = Url.builder()
+                .id(updateDTO.getId())
+                .url(updateDTO.getUrl())
+                .memo(updateDTO.getMemo())
+                .build();
 
-        List<Url> entities = urlService.update(entity, userId, urlDTO.getCategory_id());
+        Url updateUrl = urlService.update(entity, userId, updateDTO.getCategory_id(), updateDTO.getTagDTOList());
 
-        // (6) ResponseDTO를 리턴한다.
-        return ResponseEntity.ok("success");
+        List<TagDTO> tagDTOList = new ArrayList<>();
+        List<UrlTag> urlTagList = updateUrl.getUrlTagList();
+        for(int i=0;i<urlTagList.size();i++){
+            tagDTOList.add(new TagDTO(
+                    urlTagList.get(i).getTag().getId(),
+                    urlTagList.get(i).getTag().getName()));
+        }
+
+        UrlDTO responseUrlDTO = UrlDTO.builder()
+                .id(updateUrl.getId())
+                .url(updateUrl.getUrl())
+                .memo(updateUrl.getMemo())
+                .isStarred(updateUrl.getIsStarred())
+                .isWatched(updateUrl.getIsWatched())
+                .createAt(updateUrl.getCreateAt())
+                .watchedAt(updateUrl.getWatchedAt())
+                .category_id(updateUrl.getCategory().getId())
+                .tagDTOList(tagDTOList)
+                .build();
+
+        return ResponseEntity.ok(responseUrlDTO);
     }
 
     @ApiOperation(value = "url 삭제", notes = "url path id인 url삭제")
